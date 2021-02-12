@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 func GetBody(URL string) ([]byte, error) {
@@ -89,6 +90,7 @@ func ParseContest(URL, path string, info *contestInfo) error {
 		return err
 	}
 	name := string(info.nameRg.FindSubmatch(body)[1])
+	name = strings.Replace(name, " ", "_", -1)
 	os.Mkdir(name, 01644)
 	os.Chdir(filepath.Join(path, name))
 	fmt.Println("Parsing contest " + name)
