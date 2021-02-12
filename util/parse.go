@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 )
 
@@ -90,10 +91,12 @@ func ParseContest(URL, path string, info *contestInfo) error {
 		return err
 	}
 	name := string(info.nameRg.FindSubmatch(body)[1])
+	fmt.Println("Parsing contest " + name)
 	name = strings.Replace(name, " ", "_", -1)
+	nonWord := regexp.MustCompile(`\W`)
+	name = nonWord.ReplaceAllString(name, "")
 	os.Mkdir(name, 01644)
 	os.Chdir(filepath.Join(path, name))
-	fmt.Println("Parsing contest " + name)
 
 	for _, suffix := range info.probsRg.FindAllSubmatch(body, -1) {
 		os.Mkdir(string(suffix[2]), 01644)
