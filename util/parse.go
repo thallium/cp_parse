@@ -95,11 +95,11 @@ func ParseContest(URL, path string, info *contestInfo) error {
 	name = strings.Replace(name, " ", "_", -1)
 	nonWord := regexp.MustCompile(`\W`)
 	name = nonWord.ReplaceAllString(name, "")
-	os.Mkdir(name, 01644)
+	os.Mkdir(name, 01755)
 	os.Chdir(filepath.Join(path, name))
 
 	for _, suffix := range info.probsRg.FindAllSubmatch(body, -1) {
-		os.Mkdir(string(suffix[2]), 01644)
+		os.Mkdir(string(suffix[2]), 01755)
 		err := ParseProblem(info.baseURL+string(suffix[1]), filepath.Join(path, name, string(suffix[2])), info.probInfo)
 		if err != nil {
 			return err
