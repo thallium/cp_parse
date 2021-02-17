@@ -29,12 +29,21 @@ var cfgFile string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "cp_parser",
-	Short: "A brief description of your application",
-	Long: `cp_parser can parse input and output of single problem/contest
-from multiple competitive programming websites.
-Examples:
-cp_parser cf  `,
+	Use:   `cp_parser [website] [contest/problem]`,
+	Short: "cp_parser parses sample test of problems or contests from competitive programming websites",
+//     Long: `Website:
+// atc Atcoder
+// cf Codeforces
+// kattis Kattis
+// 
+// Contest/problem format:
+// URL is always accepted, see cp_parser [website] -h for website-specific formats
+// 
+// Examples:
+// 
+// cp_parser cf https://codeforces.com/contest/1490
+// cp_parser atc https://atcoder.jp/contests/arc112
+// cp_parser kattis https://open.kattis.com/contests/nar20practice14`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	// Run: func(cmd *cobra.Command, args []string) { },
@@ -53,11 +62,11 @@ func init() {
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
 
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.cp_parser.yaml)")
+	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.cp_parser.yaml)")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 
 // initConfig reads in config file and ENV variables if set.

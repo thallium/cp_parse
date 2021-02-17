@@ -1,5 +1,5 @@
 /*
-Copyright © 2021 NAME HERE <EMAIL ADDRESS>
+Copyright © 2021 Gengchen Tuo <tuogengchen@gmail.com>
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -27,13 +27,20 @@ import (
 // atcCmd represents the atc command
 var atcCmd = &cobra.Command{
 	Use:   "atc",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Short: "Parse problems/contests from atcoder.jp",
+    Long:`Usage: 
+    cp_parser atc [contest/problem]
+Contest can be:
+    URL             e.g. https://atcoder.jp/contests/arc112
+    Contest id      e.g. arc112
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+Problem can be:
+    URL             e.g. https://atcoder.jp/contests/arc112/tasks/arc112_a
+    Problem id      e.g. arc112_a
+
+Example:
+    cp_parser atc https://atcoder.jp/contests/arc112/tasks/arc112_a
+    cp_parser atc arc112`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) != 1 {
 			fmt.Printf("Exact one argument should be provided, but get %v arguments\n", len(args))
