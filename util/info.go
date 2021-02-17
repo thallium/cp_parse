@@ -1,11 +1,16 @@
 package util
 
-import "regexp"
+import (
+	"regexp"
+
+	"github.com/oriser/regroup"
+)
 
 type contestInfo struct {
-	probsRg, nameRg *regexp.Regexp
-	probInfo        *problemInfo
-	baseURL         string
+	probsRg  *regroup.ReGroup
+	nameRg   *regexp.Regexp
+	probInfo *problemInfo
+	baseURL  string
 }
 
 type problemInfo struct {
@@ -19,7 +24,7 @@ var CfProb = &problemInfo{
 }
 
 var CfContest = &contestInfo{
-	regexp.MustCompile(`<td class="id">\s*?<a href="(?P<link>[[:print:]]+?)">\s*(?P<index>\w+?)\s*<`),
+	regroup.MustCompile(`<td class="id">\s*?<a href="(?P<link>[[:print:]]+?)">\s*(?P<index>\w+?)\s*<`),
 	regexp.MustCompile(`<table class="rtable ">[\s\S]*?<a.*?href.*?>([[:print:]]+?)</a>`),
 	CfProb,
 	`https://codeforces.com`,
@@ -32,8 +37,21 @@ var AtcoderProb = &problemInfo{
 }
 
 var AtcoderContest = &contestInfo{
-	regexp.MustCompile(`<a href="(?P<link>[[:print:]]+?)">(?P<index>\w{1,2})</a>`),
+	regroup.MustCompile(`<a href="(?P<link>[[:print:]]+?)">(?P<index>\w{1,2})</a>`),
 	regexp.MustCompile(`<a class="contest-title".*?>([[:print:]]+?)</a>`),
 	AtcoderProb,
 	`https://atcoder.jp`,
+}
+
+var KattisProb = &problemInfo{
+	regexp.MustCompile(`<div class="headline-wrapper"><h1>([[:print:]]+?)</h1>`),
+	regexp.MustCompile(`Sample Input[\s\S]*?<pre>([\s\S]*?)</pre>`),
+	regexp.MustCompile(`Sample Output[\s\S]*?<pre>[\s\S]*?</pre>[\s\S]*?<pre>([\s\S]*?)</pre>`),
+}
+
+var KattisContest = &contestInfo{
+	regroup.MustCompile(`<th class="problem_letter">(?P<index>\w+?)<[\s\S]*?href="(?P<link>[[:print:]]+?)">`),
+	regexp.MustCompile(`<div class="header-title">([[:print:]]+?)</div>`),
+	KattisProb,
+	`https://open.kattis.com`,
 }

@@ -21,11 +21,9 @@ func GetBody(URL string) ([]byte, error) {
 	return ioutil.ReadAll(resp.Body)
 }
 func findSample(body []byte, info *problemInfo) (input [][]byte, output [][]byte, err error) {
-	// irg := regexp.MustCompile(`class="input"[\s\S]*?<pre>(.*?)</pre>`)
-
 	in := info.inputRg.FindAllSubmatch(body, -1)
 	ou := info.outputRg.FindAllSubmatch(body, -1)
-	// in := irg.FindAllSubmatch(body, -1)
+
 	if in == nil || ou == nil || len(in) != len(ou) {
 		return nil, nil, fmt.Errorf("Parse sample failed")
 	}
@@ -54,12 +52,14 @@ func findName(body []byte, info *problemInfo) (string, error) {
 	}
 	return string(name[1]), nil
 }
+
 func ParseProblem(URL, path string, info *problemInfo) error {
 	body, err := GetBody(URL)
 	if err != nil {
 		return err
 	}
 	name, err := findName(body, info)
+	name = strings.Replace(name, `<br/>`, " ", -1)
 	if err != nil {
 		return err
 	}
@@ -98,9 +98,20 @@ func ParseContest(URL, path string, info *contestInfo) error {
 	os.Mkdir(name, 01755)
 	os.Chdir(filepath.Join(path, name))
 
-	for _, suffix := range info.probsRg.FindAllSubmatch(body, -1) {
-		os.Mkdir(string(suffix[2]), 01755)
-		err := ParseProblem(info.baseURL+string(suffix[1]), filepath.Join(path, name, string(suffix[2])), info.probInfo)
+	type prob struct {
+		Link  string `regroup:"link"`
+		Index string `regroup:"index"`
+	}
+	target := &prob{}
+	rets, err := info.probsRg.MatchAllToTarget(string(body), -1, target)
+	if err != nil {
+		return err
+	}
+	for _, suffix := range rets {
+		index := suffix.(*prob).Index
+		os.Mkdir(index, 01755)
+        ioutil.WriteFile(filepath.Join(path, name, index, index+".cpp"),nil, 0644)
+		err := ParseProblem(info.baseURL+suffix.(*prob).Link, filepath.Join(path, name, index), info.probInfo)
 		if err != nil {
 			return err
 		}
