@@ -3,7 +3,7 @@ Parsing test cases from competitive programming contest websites.
 
 ```
 Usage:
-  cp_parser [command]
+  cp_parse [command]
 
 Available Commands:
   atc         Parse problems/contests from atcoder.jp

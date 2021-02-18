@@ -16,7 +16,7 @@ limitations under the License.
 package main
 
 import (
-	"github.com/thallium/cp_parser/cmd"
+	"github.com/thallium/cp_parse/cmd"
 )
 
 func main() {

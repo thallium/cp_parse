@@ -20,14 +20,16 @@ func GetBody(URL string) ([]byte, error) {
 
 	return ioutil.ReadAll(resp.Body)
 }
+
 func findSample(body []byte, info *problemInfo) (input [][]byte, output [][]byte, err error) {
 	in := info.inputRg.FindAllSubmatch(body, -1)
 	ou := info.outputRg.FindAllSubmatch(body, -1)
-
 	if in == nil || ou == nil || len(in) != len(ou) {
 		return nil, nil, fmt.Errorf("Parse sample failed")
 	}
 	processString := func(s []byte) []byte {
+		brRg := regexp.MustCompile(`<br ?/>`)
+		s = brRg.ReplaceAll(s, []byte("\n"))
 		if s[0] == '\n' {
 			s = s[1:]
 		}
