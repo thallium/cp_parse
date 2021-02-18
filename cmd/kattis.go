@@ -21,15 +21,15 @@ import (
 	"regexp"
 
 	"github.com/spf13/cobra"
-	"github.com/thallium/cp_parser/util"
+	"github.com/thallium/cp_parse/util"
 )
 
 // kattisCmd represents the kattis command
 var kattisCmd = &cobra.Command{
 	Use:   "kattis",
 	Short: "Parse problems/contests from open.kattis.com",
-    Long:`Usage: 
-    cp_parser kattis [contest/problem]
+	Long: `Usage: 
+    cp_parse kattis [contest/problem]
 Contest can be:
     URL             e.g. https://open.kattis.com/contests/nar20practice14
                          https://open.kattis.com/contests/nar20practice14/problems
@@ -39,8 +39,8 @@ Problem can be:
     Problem id      e.g. sequences, 10kindsofpeople
 
 Example:
-    cp_parser kattis 10kindsofpeople
-    cp_parser kattis https://open.kattis.com/contests/nar20practice14`,
+    cp_parse kattis 10kindsofpeople
+    cp_parse kattis https://open.kattis.com/contests/nar20practice14`,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		if len(args) != 1 {

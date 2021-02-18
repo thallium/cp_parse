@@ -21,15 +21,15 @@ import (
 	"regexp"
 
 	"github.com/spf13/cobra"
-	"github.com/thallium/cp_parser/util"
+	"github.com/thallium/cp_parse/util"
 )
 
 // atcCmd represents the atc command
 var atcCmd = &cobra.Command{
 	Use:   "atc",
 	Short: "Parse problems/contests from atcoder.jp",
-    Long:`Usage: 
-    cp_parser atc [contest/problem]
+	Long: `Usage: 
+    cp_parse atc [contest/problem]
 Contest can be:
     URL             e.g. https://atcoder.jp/contests/arc112
     Contest id      e.g. arc112
@@ -39,8 +39,8 @@ Problem can be:
     Problem id      e.g. arc112_a
 
 Example:
-    cp_parser atc https://atcoder.jp/contests/arc112/tasks/arc112_a
-    cp_parser atc arc112`,
+    cp_parse atc https://atcoder.jp/contests/arc112/tasks/arc112_a
+    cp_parse atc arc112`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) != 1 {
 			fmt.Printf("Exact one argument should be provided, but get %v arguments\n", len(args))

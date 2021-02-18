@@ -21,15 +21,15 @@ import (
 	"regexp"
 
 	"github.com/spf13/cobra"
-	"github.com/thallium/cp_parser/util"
+	"github.com/thallium/cp_parse/util"
 )
 
 // cfCmd represents the cf command
 var cfCmd = &cobra.Command{
 	Use:   "cf",
 	Short: "Parse problems/contests from codeforces.com",
-    Long:`Usage: 
-    cp_parser cf [contest/problem]
+	Long: `Usage: 
+    cp_parse cf [contest/problem]
 Contest can be:
     URL             e.g. https://codeforces.com/contest/1490
     Contest id      e.g. 1490
@@ -40,8 +40,8 @@ Problem can be:
     Problem id      e.g. 1490A, 1490a
 
 Example:
-    cp_parser cf https://codeforces.com/contest/1490/problem/A
-    cp_parser cf 1490`,
+    cp_parse cf https://codeforces.com/contest/1490/problem/A
+    cp_parse cf 1490`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) != 1 {
 			fmt.Printf("Exact one argument should be provided, but get %v arguments\n", len(args))

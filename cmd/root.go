@@ -29,21 +29,21 @@ var cfgFile string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   `cp_parser [website] [contest/problem]`,
-	Short: "cp_parser parses sample test of problems or contests from competitive programming websites",
-//     Long: `Website:
-// atc Atcoder
-// cf Codeforces
-// kattis Kattis
-// 
-// Contest/problem format:
-// URL is always accepted, see cp_parser [website] -h for website-specific formats
-// 
-// Examples:
-// 
-// cp_parser cf https://codeforces.com/contest/1490
-// cp_parser atc https://atcoder.jp/contests/arc112
-// cp_parser kattis https://open.kattis.com/contests/nar20practice14`,
+	Use:   "cp_parse",
+	Short: "cp_parse parses sample test of problems or contests from competitive programming websites",
+	//     Long: `Website:
+	// atc Atcoder
+	// cf Codeforces
+	// kattis Kattis
+	//
+	// Contest/problem format:
+	// URL is always accepted, see cp_parse [website] -h for website-specific formats
+	//
+	// Examples:
+	//
+	// cp_parse cf https://codeforces.com/contest/1490
+	// cp_parse atc https://atcoder.jp/contests/arc112
+	// cp_parse kattis https://open.kattis.com/contests/nar20practice14`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	// Run: func(cmd *cobra.Command, args []string) { },
@@ -62,7 +62,7 @@ func init() {
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
 
-	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.cp_parser.yaml)")
+	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.cp_parse.yaml)")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
@@ -79,9 +79,9 @@ func initConfig() {
 		home, err := homedir.Dir()
 		cobra.CheckErr(err)
 
-		// Search config in home directory with name ".cp_parser" (without extension).
+		// Search config in home directory with name ".cp_parse" (without extension).
 		viper.AddConfigPath(home)
-		viper.SetConfigName(".cp_parser")
+		viper.SetConfigName(".cp_parse")
 	}
 
 	viper.AutomaticEnv() // read in environment variables that match

@@ -97,7 +97,6 @@ func ParseContest(URL, path string, info *contestInfo) error {
 	name = nonWord.ReplaceAllString(name, "")
 	os.Mkdir(name, 01755)
 	os.Chdir(filepath.Join(path, name))
-
 	type prob struct {
 		Link  string `regroup:"link"`
 		Index string `regroup:"index"`
@@ -110,7 +109,7 @@ func ParseContest(URL, path string, info *contestInfo) error {
 	for _, suffix := range rets {
 		index := suffix.(*prob).Index
 		os.Mkdir(index, 01755)
-        ioutil.WriteFile(filepath.Join(path, name, index, index+".cpp"),nil, 0644)
+		ioutil.WriteFile(filepath.Join(path, name, index, index+".cpp"), nil, 0644)
 		err := ParseProblem(info.baseURL+suffix.(*prob).Link, filepath.Join(path, name, index), info.probInfo)
 		if err != nil {
 			return err
