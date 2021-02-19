@@ -1,6 +1,17 @@
 # cp_parser
 Parsing test cases from competitive programming contest websites.
 
+## Installation
+
+You can either:
+- Download the binary from [Release](https://github.com/thallium/cp_parse/releases)
+- Build by yourself:
+
+`go get -u 'github.com/thallium/cp_parse'`
+
+This will install the `cp_parse` executable with the library and its dependencies.
+
+## Usage
 ```
 Usage:
   cp_parse [command]
