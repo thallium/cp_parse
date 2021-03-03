@@ -70,8 +70,11 @@ Example:
 var kattisArgRegStr = map[string]int{
 	`^https://open.kattis.com/contests/\w+/problems/\w+$`: 0,
 	`^https://open.kattis.com/problems/\w+$`:              0,
+	`^https://\w+.kattis.com/problems/\w+$`:               0,
 	`^https://open.kattis.com/contests/\w+/problems$`:     1,
+	`^https://\w+.kattis.com/problems$`:                   1,
 	`^https://open.kattis.com/contests/\w+$`:              3,
+	`^https://\w+.kattis.com$`:                            3,
 	`^\w+$`:                                               2,
 }
 
