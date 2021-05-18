@@ -38,7 +38,7 @@ var AtcoderProb = &problemInfo{
 
 var AtcoderContest = &contestInfo{
 	regroup.MustCompile(`<a href="(?P<link>[[:print:]]+?)">(?P<index>\w{1,2})</a>`),
-	regexp.MustCompile(`<a class="contest-title".*?>([[:print:]]+?)</a>`),
+	regexp.MustCompile(`<a class="contest-title".*?>(.+?)</a>`),
 	AtcoderProb,
 	`https://atcoder.jp`,
 }
