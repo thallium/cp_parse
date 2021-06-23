@@ -70,6 +70,21 @@ func ParseProblem(URL, path string, info *problemInfo) error {
 	if err != nil {
 		return err
 	}
+
+	// delete old input and output files
+	old_in, err_in := filepath.Glob("*.in")
+	old_out, err_out := filepath.Glob("*.out")
+	if err_in != nil || err_out != nil {
+		return err
+	}
+	delete_files := func(files []string) {
+		for _, file := range files {
+			os.Remove(file)
+		}
+	}
+	delete_files(old_in)
+	delete_files(old_out)
+
 	for i := 0; i < len(input); i++ {
 		fileIn := filepath.Join(path, fmt.Sprintf("%v.in", i+1))
 		fileOut := filepath.Join(path, fmt.Sprintf("%v.out", i+1))
@@ -83,7 +98,12 @@ func ParseProblem(URL, path string, info *problemInfo) error {
 			return e
 		}
 	}
-	fmt.Printf("Parsed %v with %v sample(s)\n", name, len(input))
+	if len(input) == 1 {
+		fmt.Printf("Parsed %v with 1 sample\n", name)
+	} else {
+		fmt.Printf("Parsed %v with %v samples\n", name, len(input))
+
+	}
 	return nil
 }
 

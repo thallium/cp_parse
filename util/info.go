@@ -31,13 +31,13 @@ var CfContest = &contestInfo{
 }
 
 var AtcoderProb = &problemInfo{
-	regexp.MustCompile(`<span class="h2">\s*?([[:print:]]+?)\s*?<`),
+	regexp.MustCompile(`<span class="h2">\s*(.+?)\s*?<`),
 	regexp.MustCompile(`Sample Input [\s\S]*?<pre>([\s\S]*?)</pre>`),
 	regexp.MustCompile(`Sample Output [\s\S]*?<pre>([\s\S]*?)</pre>`),
 }
 
 var AtcoderContest = &contestInfo{
-	regroup.MustCompile(`<a href="(?P<link>[[:print:]]+?)">(?P<index>\w{1,2})</a>`),
+	regroup.MustCompile(`<a href="(?P<link>.+?)">(?P<index>\w{1,2})</a>`),
 	regexp.MustCompile(`<a class="contest-title".*?>(.+?)</a>`),
 	AtcoderProb,
 	`https://atcoder.jp`,
