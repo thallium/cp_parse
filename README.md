@@ -7,7 +7,7 @@ You can either:
 - Download the binary from [Release](https://github.com/thallium/cp_parse/releases)
 - Build by yourself:
 
-`go get -u 'github.com/thallium/cp_parse'`
+`go install github.com/thallium/cp_parse@latest`
 
 This will install the `cp_parse` executable with the library and its dependencies.
 
