@@ -25,32 +25,32 @@ import (
 	"github.com/thallium/cp_parse/util"
 )
 
-var AtcoderProb = &util.ProblemInfo{
+var atcoderProbInfo = &util.ProblemInfo{
 	regexp.MustCompile(`<span class="h2">\s*(.+?)\s*?<`),
 	regexp.MustCompile(`Sample Input [\s\S]*?<pre>([\s\S]*?)</pre>`),
 	regexp.MustCompile(`Sample Output [\s\S]*?<pre>([\s\S]*?)</pre>`),
 }
 
-var AtcoderContest = &util.ContestInfo{
+var atcoderContestInfo = &util.ContestInfo{
 	regroup.MustCompile(`<a href="(?P<link>.+?)">(?P<index>\w{1,2})</a>`),
 	regexp.MustCompile(`<a class="contest-title".*?>(.+?)</a>`),
-	AtcoderProb,
+	atcoderProbInfo,
 	`https://atcoder.jp`,
 }
 
 var atcArgRegStr = map[string]int{
-	`^https://atcoder.jp/contests/\w+?/tasks/\w+$`: 0,
-	`^https://atcoder.jp/contests/\w+?$`:           1,
-	`^([\w-]+)_[[:alpha:]]$`:                       2,
-	`^[\w-]+$`:                                     3,
+	`^https://atcoder.jp/contests/\w+?/tasks/\w+$`: util.ProbURL,
+	`^https://atcoder.jp/contests/\w+?$`:           util.ContestURL,
+	`^([\w-]+)_[[:alpha:]]$`:                       util.ProbID,
+	`^[\w-]+$`:                                     util.ContestID,
 }
 
-func argToURL(arg string, ty int, match []string) (string, int) {
-	if ty == 3 {
+func atcArgToURL(arg string, ty int, match []string) (string, int) {
+	if ty == util.ContestID {
 		return `https://atcoder.jp/contests/` + arg + `/tasks`, 1
-	} else if ty == 2 {
+	} else if ty == util.ProbID {
 		return fmt.Sprintf(`https://atcoder.jp/contests/%v/tasks/%v`, match[1], arg), 0
-	} else if ty == 1 {
+	} else if ty == util.ContestURL {
 		return arg + `/tasks`, 1
 	} else {
 		return arg, ty
@@ -86,11 +86,11 @@ Example:
 		if args[0][len(args[0])-1] == '/' {
 			args[0] = args[0][:len(args[0])-1]
 		}
-		URL, ty := atcProcessArg(args[0])
+		URL, ty := util.ProcessArg(args[0], &atcArgRegStr, atcArgToURL)
 		if ty == 0 {
-			err = util.ParseProblem(URL, dir, util.AtcoderProb)
+			err = util.ParseProblem(URL, dir, atcoderProbInfo)
 		} else if ty == 1 {
-			err = util.ParseContest(URL, dir, util.AtcoderContest)
+			err = util.ParseContest(URL, dir, atcoderContestInfo)
 		}
 		if err != nil {
 			fmt.Println(err.Error())
@@ -98,18 +98,6 @@ Example:
 		}
 
 	},
-}
-
-func atcProcessArg(arg string) (string, int) {
-	for regStr, ty := range atcArgRegStr {
-		reg := regexp.MustCompile(regStr)
-		match := reg.FindStringSubmatch(arg)
-		if len(match) != 0 && match[0] != "" {
-		}
-	}
-	fmt.Println("Invalid problem/contest")
-	os.Exit(1)
-	return "", 0
 }
 
 func init() {

@@ -25,20 +25,20 @@ import (
 	"github.com/thallium/cp_parse/util"
 )
 
-var probInfo = &util.ProblemInfo{
+var cfProbInfo = &util.ProblemInfo{
 	NameRg:   regexp.MustCompile(`<div class="title">([[:print:]]+?)<`),
 	InputRg:  regexp.MustCompile(`class="input"[\s\S]*?<pre>([\s\S]*?)</pre>`),
 	OutputRg: regexp.MustCompile(`class="output"[\s\S]*?<pre>([\s\S]*?)</pre>`),
 }
 
-var contestInfo = &util.ContestInfo{
+var cfContestInfo = &util.ContestInfo{
 	ProbsRg:  regroup.MustCompile(`<td class="id">\s*?<a href="(?P<link>[[:print:]]+?)">\s*(?P<index>\w+?)\s*<`),
 	NameRg:   regexp.MustCompile(`<table class="rtable ">[\s\S]*?<a.*?href.*?>([[:print:]]+?)</a>`),
-	ProbInfo: probInfo,
+	ProbInfo: cfProbInfo,
 	BaseURL:  `https://codeforces.com`,
 }
 
-var argRegStr = map[string]int{
+var cfArgRegStr = map[string]int{
 	`^https://codeforces.com/problemset/problem/\d+/[[:alpha:]]\d?$`: util.ProbURL,
 	`^https://codeforces.com/contest/\d+/problem/[[:alpha:]]\d?$`:    util.ProbURL,
 	`^https://codeforces.com/contest/\d+$`:                           util.ContestURL,
@@ -46,10 +46,10 @@ var argRegStr = map[string]int{
 	`^\d+$`:                                                          util.ContestID,
 }
 
-func argToURL(arg string, ty int, match []string) (string, int) {
-	if ty == 3 {
+func cfArgToURL(arg string, ty int, match []string) (string, int) {
+	if ty == util.ContestID {
 		return `https://codeforces.com/contest/` + arg, 1
-	} else if ty == 2 {
+	} else if ty == util.ProbID {
 		return fmt.Sprintf(`https://codeforces.com/problemset/problem/%v/%v`, match[1], match[2]), 0
 	} else {
 		return arg, ty
@@ -83,11 +83,11 @@ Example:
 		if err != nil {
 			os.Exit(1)
 		}
-		URL, ty := util.ProcessArg(args[0], &argRegStr, argToURL)
+		URL, ty := util.ProcessArg(args[0], &cfArgRegStr, cfArgToURL)
 		if ty == 0 {
-			err = util.ParseProblem(URL, dir, probInfo)
+			err = util.ParseProblem(URL, dir, cfProbInfo)
 		} else if ty == 1 {
-			err = util.ParseContest(URL, dir, contestInfo)
+			err = util.ParseContest(URL, dir, cfContestInfo)
 		}
 		if err != nil {
 			fmt.Println(err.Error())

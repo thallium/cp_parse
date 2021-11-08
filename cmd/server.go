@@ -31,7 +31,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Println(d.Content)
 	fmt.Println(d.Website)
-	rootCmd.exe
+	// rootCmd.exe
 }
 
 var serverCmd = &cobra.Command{
