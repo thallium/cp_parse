@@ -26,16 +26,16 @@ import (
 )
 
 var kattisProbInfo = &util.ProblemInfo{
-	regexp.MustCompile(`<div class="headline-wrapper"><h1>([[:print:]]+?)</h1>`),
-	regexp.MustCompile(`Sample Input[\s\S]*?<pre>([\s\S]*?)</pre>`),
-	regexp.MustCompile(`Sample Output[\s\S]*?<pre>[\s\S]*?</pre>[\s\S]*?<pre>([\s\S]*?)</pre>`),
+	NameRg:   regexp.MustCompile(`<div class="headline-wrapper"><h1>([[:print:]]+?)</h1>`),
+	InputRg:  regexp.MustCompile(`Sample Input[\s\S]*?<pre>([\s\S]*?)</pre>`),
+	OutputRg: regexp.MustCompile(`Sample Output[\s\S]*?<pre>[\s\S]*?</pre>[\s\S]*?<pre>([\s\S]*?)</pre>`),
 }
 
 var kattisContestInfo = &util.ContestInfo{
-	regroup.MustCompile(`<th class="problem_letter">(?P<index>\w+?)<[\s\S]*?href="(?P<link>[[:print:]]+?)">`),
-	regexp.MustCompile(`<div class="header-title">([[:print:]]+?)</div>`),
-	kattisProbInfo,
-	`https://open.kattis.com`,
+	ProbsRg:  regroup.MustCompile(`<th class="problem_letter">(?P<index>\w+?)<[\s\S]*?href="(?P<link>[[:print:]]+?)">`),
+	NameRg:   regexp.MustCompile(`<div class="header-title">([[:print:]]+?)</div>`),
+	ProbInfo: kattisProbInfo,
+	BaseURL:  `https://open.kattis.com`,
 }
 
 var kattisArgRegStr = map[string]int{
