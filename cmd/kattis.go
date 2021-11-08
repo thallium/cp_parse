@@ -20,9 +20,41 @@ import (
 	"os"
 	"regexp"
 
+	"github.com/oriser/regroup"
 	"github.com/spf13/cobra"
 	"github.com/thallium/cp_parse/util"
 )
+
+var kattisProbInfo = &util.ProblemInfo{
+	regexp.MustCompile(`<div class="headline-wrapper"><h1>([[:print:]]+?)</h1>`),
+	regexp.MustCompile(`Sample Input[\s\S]*?<pre>([\s\S]*?)</pre>`),
+	regexp.MustCompile(`Sample Output[\s\S]*?<pre>[\s\S]*?</pre>[\s\S]*?<pre>([\s\S]*?)</pre>`),
+}
+
+var kattisContestInfo = &util.ContestInfo{
+	regroup.MustCompile(`<th class="problem_letter">(?P<index>\w+?)<[\s\S]*?href="(?P<link>[[:print:]]+?)">`),
+	regexp.MustCompile(`<div class="header-title">([[:print:]]+?)</div>`),
+	kattisProbInfo,
+	`https://open.kattis.com`,
+}
+
+var kattisArgRegStr = map[string]int{
+	`^https://open.kattis.com/contests/\w+/problems/\w+$`: util.ProbURL,
+	`^https://\w+.kattis.com/problems/\w+$`:               util.ProbURL,
+	`^https://\w+.kattis.com/problems$`:                   util.ContestURL,
+	`^https://open.kattis.com/contests/\w+$`:              util.ContestURL,
+	`^\w+$`:                                               util.ProbID,
+}
+
+func kattisArgToURL(arg string, ty int, match []string) (string, int) {
+	if ty == util.ProbID {
+		return `https://open.kattis.com/problems/` + arg, 0
+	} else if ty == util.ContestURL {
+		return arg + `/problems`, 1
+	} else {
+		return arg, ty
+	}
+}
 
 // kattisCmd represents the kattis command
 var kattisCmd = &cobra.Command{
@@ -54,11 +86,11 @@ Example:
 		if args[0][len(args[0])-1] == '/' {
 			args[0] = args[0][:len(args[0])-1]
 		}
-		URL, ty := kattisProcessArg(args[0])
+		URL, ty := util.ProcessArg(args[0], &kattisArgRegStr, kattisArgToURL)
 		if ty == 0 {
-			err = util.ParseProblem(URL, dir, util.KattisProb)
+			err = util.ParseProblem(URL, dir, kattisProbInfo)
 		} else if ty == 1 {
-			err = util.ParseContest(URL, dir, util.KattisContest)
+			err = util.ParseContest(URL, dir, kattisContestInfo)
 		}
 		if err != nil {
 			fmt.Println(err.Error())
@@ -67,35 +99,6 @@ Example:
 	},
 }
 
-var kattisArgRegStr = map[string]int{
-	`^https://open.kattis.com/contests/\w+/problems/\w+$`: 0,
-	`^https://open.kattis.com/problems/\w+$`:              0,
-	`^https://\w+.kattis.com/problems/\w+$`:               0,
-	`^https://open.kattis.com/contests/\w+/problems$`:     1,
-	`^https://\w+.kattis.com/problems$`:                   1,
-	`^https://open.kattis.com/contests/\w+$`:              3,
-	`^https://\w+.kattis.com$`:                            3,
-	`^\w+$`:                                               2,
-}
-
-func kattisProcessArg(arg string) (string, int) {
-	for regStr, ty := range kattisArgRegStr {
-		reg := regexp.MustCompile(regStr)
-		match := reg.FindStringSubmatch(arg)
-		if len(match) != 0 && match[0] != "" {
-			if ty == 2 {
-				return `https://open.kattis.com/problems/` + arg, 0
-			} else if ty == 3 {
-				return arg + `/problems`, 1
-			} else {
-				return arg, ty
-			}
-		}
-	}
-	fmt.Println("Invalid problem/contest")
-	os.Exit(1)
-	return "", 0
-}
 func init() {
 	rootCmd.AddCommand(kattisCmd)
 

@@ -20,9 +20,41 @@ import (
 	"os"
 	"regexp"
 
+	"github.com/oriser/regroup"
 	"github.com/spf13/cobra"
 	"github.com/thallium/cp_parse/util"
 )
+
+var probInfo = &util.ProblemInfo{
+	NameRg:   regexp.MustCompile(`<div class="title">([[:print:]]+?)<`),
+	InputRg:  regexp.MustCompile(`class="input"[\s\S]*?<pre>([\s\S]*?)</pre>`),
+	OutputRg: regexp.MustCompile(`class="output"[\s\S]*?<pre>([\s\S]*?)</pre>`),
+}
+
+var contestInfo = &util.ContestInfo{
+	ProbsRg:  regroup.MustCompile(`<td class="id">\s*?<a href="(?P<link>[[:print:]]+?)">\s*(?P<index>\w+?)\s*<`),
+	NameRg:   regexp.MustCompile(`<table class="rtable ">[\s\S]*?<a.*?href.*?>([[:print:]]+?)</a>`),
+	ProbInfo: probInfo,
+	BaseURL:  `https://codeforces.com`,
+}
+
+var argRegStr = map[string]int{
+	`^https://codeforces.com/problemset/problem/\d+/[[:alpha:]]\d?$`: util.ProbURL,
+	`^https://codeforces.com/contest/\d+/problem/[[:alpha:]]\d?$`:    util.ProbURL,
+	`^https://codeforces.com/contest/\d+$`:                           util.ContestURL,
+	`^(\d+)([[:alpha:]]\d?)$`:                                        util.ProbID,
+	`^\d+$`:                                                          util.ContestID,
+}
+
+func argToURL(arg string, ty int, match []string) (string, int) {
+	if ty == 3 {
+		return `https://codeforces.com/contest/` + arg, 1
+	} else if ty == 2 {
+		return fmt.Sprintf(`https://codeforces.com/problemset/problem/%v/%v`, match[1], match[2]), 0
+	} else {
+		return arg, ty
+	}
+}
 
 // cfCmd represents the cf command
 var cfCmd = &cobra.Command{
@@ -51,44 +83,17 @@ Example:
 		if err != nil {
 			os.Exit(1)
 		}
-		URL, ty := cfProcessArg(args[0])
+		URL, ty := util.ProcessArg(args[0], &argRegStr, argToURL)
 		if ty == 0 {
-			err = util.ParseProblem(URL, dir, util.CfProb)
+			err = util.ParseProblem(URL, dir, probInfo)
 		} else if ty == 1 {
-			err = util.ParseContest(URL, dir, util.CfContest)
+			err = util.ParseContest(URL, dir, contestInfo)
 		}
 		if err != nil {
 			fmt.Println(err.Error())
 			os.Exit(1)
 		}
 	},
-}
-
-var cfArgRegStr = map[string]int{
-	`^https://codeforces.com/problemset/problem/\d+/[[:alpha:]]\d?$`: 0,
-	`^https://codeforces.com/contest/\d+/problem/[[:alpha:]]\d?$`:    0,
-	`^https://codeforces.com/contest/\d+$`:                           1,
-	`^(\d+)([[:alpha:]]\d?)$`:                                        2,
-	`^\d+$`:                                                          3,
-}
-
-func cfProcessArg(arg string) (string, int) {
-	for regStr, ty := range cfArgRegStr {
-		reg := regexp.MustCompile(regStr)
-		match := reg.FindStringSubmatch(arg)
-		if len(match) != 0 && match[0] != "" {
-			if ty == 3 {
-				return `https://codeforces.com/contest/` + arg, 1
-			} else if ty == 2 {
-				return fmt.Sprintf(`https://codeforces.com/problemset/problem/%v/%v`, match[1], match[2]), 0
-			} else {
-				return arg, ty
-			}
-		}
-	}
-	fmt.Println("Invalid problem/contest")
-	os.Exit(1)
-	return "", 0
 }
 
 func init() {

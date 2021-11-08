@@ -12,6 +12,7 @@ type data struct {
 	Content string
 	Website string
 }
+
 func handler(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
 		http.Error(w, "404 not found.", http.StatusNotFound)
@@ -23,25 +24,26 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var d data
-	
+
 	if err := json.NewDecoder(r.Body).Decode(&d); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	fmt.Println(r.Body)
 	fmt.Println(d.Content)
+	fmt.Println(d.Website)
+	rootCmd.exe
 }
 
-// cfCmd represents the cf command
 var serverCmd = &cobra.Command{
 	Use:   "server",
 	Short: "start a server for parsing data from the broswer extension",
-	Long: "",
+	Long:  "",
 	Run: func(cmd *cobra.Command, args []string) {
 		http.HandleFunc("/", handler)
-		http.ListenAndServe(":8090", nil);
+		http.ListenAndServe(":8090", nil)
 	},
 }
+
 func init() {
 	rootCmd.AddCommand(serverCmd)
 

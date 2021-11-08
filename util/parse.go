@@ -21,9 +21,9 @@ func GetBody(URL string) ([]byte, error) {
 	return ioutil.ReadAll(resp.Body)
 }
 
-func findSample(body []byte, info *problemInfo) (input [][]byte, output [][]byte, err error) {
-	in := info.inputRg.FindAllSubmatch(body, -1)
-	ou := info.outputRg.FindAllSubmatch(body, -1)
+func findSample(body []byte, info *ProblemInfo) (input [][]byte, output [][]byte, err error) {
+	in := info.InputRg.FindAllSubmatch(body, -1)
+	ou := info.OutputRg.FindAllSubmatch(body, -1)
 	if in == nil || ou == nil || len(in) != len(ou) {
 		return nil, nil, fmt.Errorf("Parse sample failed")
 	}
@@ -47,15 +47,15 @@ func findSample(body []byte, info *problemInfo) (input [][]byte, output [][]byte
 	return
 }
 
-func findName(body []byte, info *problemInfo) (string, error) {
-	name := info.nameRg.FindSubmatch(body)
+func findName(body []byte, info *ProblemInfo) (string, error) {
+	name := info.NameRg.FindSubmatch(body)
 	if len(name) == 0 {
 		return "", fmt.Errorf("Can't find problem name!\n")
 	}
 	return string(name[1]), nil
 }
 
-func ParseProblem(URL, path string, info *problemInfo) error {
+func ParseProblem(URL, path string, info *ProblemInfo) error {
 	body, err := GetBody(URL)
 	if err != nil {
 		return err
@@ -107,12 +107,12 @@ func ParseProblem(URL, path string, info *problemInfo) error {
 	return nil
 }
 
-func ParseContest(URL, path string, info *contestInfo) error {
+func ParseContest(URL, path string, info *ContestInfo) error {
 	body, err := GetBody(URL)
 	if err != nil {
 		return err
 	}
-	name := string(info.nameRg.FindSubmatch(body)[1])
+	name := string(info.NameRg.FindSubmatch(body)[1])
 	fmt.Println("Parsing contest " + name)
 	name = strings.Replace(name, " ", "_", -1)
 	nonWord := regexp.MustCompile(`\W`)
@@ -124,7 +124,7 @@ func ParseContest(URL, path string, info *contestInfo) error {
 		Index string `regroup:"index"`
 	}
 	target := &prob{}
-	rets, err := info.probsRg.MatchAllToTarget(string(body), -1, target)
+	rets, err := info.ProbsRg.MatchAllToTarget(string(body), -1, target)
 	if err != nil {
 		return err
 	}
@@ -132,7 +132,7 @@ func ParseContest(URL, path string, info *contestInfo) error {
 		index := suffix.(*prob).Index
 		os.Mkdir(index, 01755)
 		ioutil.WriteFile(filepath.Join(path, name, index, index+".cpp"), nil, 0644)
-		err := ParseProblem(info.baseURL+suffix.(*prob).Link, filepath.Join(path, name, index), info.probInfo)
+		err := ParseProblem(info.BaseURL+suffix.(*prob).Link, filepath.Join(path, name, index), info.ProbInfo)
 		if err != nil {
 			return err
 		}

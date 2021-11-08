@@ -1,0 +1,19 @@
+{
+    "name": "",
+    "description": "Build an Extension!",
+    "version": "1.0",
+    "manifest_version": 3,
+    "host_permissions": [
+        "<all_urls>"
+    ],
+    "permissions": [
+        "tabs",
+        "scripting"
+    ],
+    "background": {
+        "service_worker": "scripts.js"
+    },
+    "action": {
+        "default_title": "Click Me"
+    }
+}

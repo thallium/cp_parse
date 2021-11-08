@@ -20,9 +20,42 @@ import (
 	"os"
 	"regexp"
 
+	"github.com/oriser/regroup"
 	"github.com/spf13/cobra"
 	"github.com/thallium/cp_parse/util"
 )
+
+var AtcoderProb = &util.ProblemInfo{
+	regexp.MustCompile(`<span class="h2">\s*(.+?)\s*?<`),
+	regexp.MustCompile(`Sample Input [\s\S]*?<pre>([\s\S]*?)</pre>`),
+	regexp.MustCompile(`Sample Output [\s\S]*?<pre>([\s\S]*?)</pre>`),
+}
+
+var AtcoderContest = &util.ContestInfo{
+	regroup.MustCompile(`<a href="(?P<link>.+?)">(?P<index>\w{1,2})</a>`),
+	regexp.MustCompile(`<a class="contest-title".*?>(.+?)</a>`),
+	AtcoderProb,
+	`https://atcoder.jp`,
+}
+
+var atcArgRegStr = map[string]int{
+	`^https://atcoder.jp/contests/\w+?/tasks/\w+$`: 0,
+	`^https://atcoder.jp/contests/\w+?$`:           1,
+	`^([\w-]+)_[[:alpha:]]$`:                       2,
+	`^[\w-]+$`:                                     3,
+}
+
+func argToURL(arg string, ty int, match []string) (string, int) {
+	if ty == 3 {
+		return `https://atcoder.jp/contests/` + arg + `/tasks`, 1
+	} else if ty == 2 {
+		return fmt.Sprintf(`https://atcoder.jp/contests/%v/tasks/%v`, match[1], arg), 0
+	} else if ty == 1 {
+		return arg + `/tasks`, 1
+	} else {
+		return arg, ty
+	}
+}
 
 // atcCmd represents the atc command
 var atcCmd = &cobra.Command{
@@ -67,27 +100,11 @@ Example:
 	},
 }
 
-var atcArgRegStr = map[string]int{
-	`^https://atcoder.jp/contests/\w+?/tasks/\w+$`: 0,
-	`^https://atcoder.jp/contests/\w+?$`:           1,
-	`^([\w-]+)_[[:alpha:]]$`:                       2,
-	`^[\w-]+$`:                                     3,
-}
-
 func atcProcessArg(arg string) (string, int) {
 	for regStr, ty := range atcArgRegStr {
 		reg := regexp.MustCompile(regStr)
 		match := reg.FindStringSubmatch(arg)
 		if len(match) != 0 && match[0] != "" {
-			if ty == 3 {
-				return `https://atcoder.jp/contests/` + arg + `/tasks`, 1
-			} else if ty == 2 {
-				return fmt.Sprintf(`https://atcoder.jp/contests/%v/tasks/%v`, match[1], arg), 0
-			} else if ty == 1 {
-				return arg + `/tasks`, 1
-			} else {
-				return arg, ty
-			}
 		}
 	}
 	fmt.Println("Invalid problem/contest")
