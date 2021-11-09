@@ -1,12 +1,8 @@
-// chrome.browserAction.onClicked.addListener(function(tab) {
-//   chrome.tabs.executeScript(tab.id,{code:   `document.getElementById("productTitle").innerText`},sendCurrentTitle);
-//  });
 function go(url) {
     var html = document.documentElement.innerHTML
-    alert(url)
     const params = {
-        content: html,
-        website: url
+        body: html,
+        url: url
     }
     const options = {
         method: 'POST',

@@ -27,8 +27,8 @@ import (
 
 var kattisProbInfo = &util.ProblemInfo{
 	NameRg:   regexp.MustCompile(`<div class="headline-wrapper"><h1>([[:print:]]+?)</h1>`),
-	InputRg:  regexp.MustCompile(`Sample Input[\s\S]*?<pre>([\s\S]*?)</pre>`),
-	OutputRg: regexp.MustCompile(`Sample Output[\s\S]*?<pre>[\s\S]*?</pre>[\s\S]*?<pre>([\s\S]*?)</pre>`),
+	InputRg:  regexp.MustCompile(`Sample Input[\s\S]*?<pre>([\s\S]*?)(<span[\s\S]*?/span>)?</pre>`),
+	OutputRg: regexp.MustCompile(`Sample Output[\s\S]*?<pre>[\s\S]*?</pre>[\s\S]*?<pre>([\s\S]*?)(<span[\s\S]*?/span>)?</pre>`),
 }
 
 var kattisContestInfo = &util.ContestInfo{

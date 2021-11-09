@@ -27,8 +27,8 @@ import (
 
 var cfProbInfo = &util.ProblemInfo{
 	NameRg:   regexp.MustCompile(`<div class="title">([[:print:]]+?)<`),
-	InputRg:  regexp.MustCompile(`class="input"[\s\S]*?<pre>([\s\S]*?)</pre>`),
-	OutputRg: regexp.MustCompile(`class="output"[\s\S]*?<pre>([\s\S]*?)</pre>`),
+	InputRg:  regexp.MustCompile(`class="input"[\s\S]*?<pre.*?>([\s\S]*?)</pre>`),
+	OutputRg: regexp.MustCompile(`class="output"[\s\S]*?<pre.*?>([\s\S]*?)</pre>`),
 }
 
 var cfContestInfo = &util.ContestInfo{
@@ -58,8 +58,9 @@ func cfArgToURL(arg string, ty int, match []string) (string, int) {
 
 // cfCmd represents the cf command
 var cfCmd = &cobra.Command{
-	Use:   "cf",
-	Short: "Parse problems/contests from codeforces.com",
+	Aliases: []string{"codeforces"},
+	Use:     "cf",
+	Short:   "Parse problems/contests from codeforces.com",
 	Long: `Usage: 
     cp_parse cf [contest/problem]
 Contest can be:

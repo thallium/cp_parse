@@ -27,8 +27,8 @@ import (
 
 var atcoderProbInfo = &util.ProblemInfo{
 	NameRg:   regexp.MustCompile(`<span class="h2">\s*(.+?)\s*?<`),
-	InputRg:  regexp.MustCompile(`Sample Input [\s\S]*?<pre>([\s\S]*?)</pre>`),
-	OutputRg: regexp.MustCompile(`Sample Output [\s\S]*?<pre>([\s\S]*?)</pre>`),
+	InputRg:  regexp.MustCompile(`Sample Input [\s\S]*?<pre.*?>([\s\S]*?)</pre>`),
+	OutputRg: regexp.MustCompile(`Sample Output [\s\S]*?<pre.*?>([\s\S]*?)</pre>`),
 }
 
 var atcoderContestInfo = &util.ContestInfo{
@@ -57,35 +57,11 @@ func atcArgToURL(arg string, ty int, match []string) (string, int) {
 	}
 }
 
-func cmdFunc(cmd *cobra.Command, args []string) {
-	if len(args) != 1 {
-		fmt.Printf("Exact one argument should be provided, but get %v arguments\n", len(args))
-		os.Exit(1)
-	}
-	dir, err := os.Getwd()
-	if err != nil {
-		os.Exit(1)
-	}
-	if args[0][len(args[0])-1] == '/' {
-		args[0] = args[0][:len(args[0])-1]
-	}
-	URL, ty := util.ProcessArg(args[0], &atcArgRegStr, atcArgToURL)
-	if ty == 0 {
-		err = util.ParseProblem(URL, dir, atcoderProbInfo)
-	} else if ty == 1 {
-		err = util.ParseContest(URL, dir, atcoderContestInfo)
-	}
-	if err != nil {
-		fmt.Println(err.Error())
-		os.Exit(1)
-	}
-
-}
-
 // atcCmd represents the atc command
 var atcCmd = &cobra.Command{
-	Use:   "atc",
-	Short: "Parse problems/contests from atcoder.jp",
+	Aliases: []string{"atcoder"},
+	Use:     "atc",
+	Short:   "Parse problems/contests from atcoder.jp",
 	Long: `Usage: 
 	It's an alias of atcoder
     cp_parse atc [contest/problem]
@@ -100,31 +76,34 @@ Problem can be:
 Example:
     cp_parse atc https://atcoder.jp/contests/arc112/tasks/arc112_a
     cp_parse atc arc112`,
-	Run: cmdFunc,
-}
+	Run: func(cmd *cobra.Command, args []string) {
+		if len(args) != 1 {
+			fmt.Printf("Exact one argument should be provided, but get %v arguments\n", len(args))
+			os.Exit(1)
+		}
+		dir, err := os.Getwd()
+		if err != nil {
+			os.Exit(1)
+		}
+		if args[0][len(args[0])-1] == '/' {
+			args[0] = args[0][:len(args[0])-1]
+		}
+		URL, ty := util.ProcessArg(args[0], &atcArgRegStr, atcArgToURL)
+		if ty == 0 {
+			err = util.ParseProblem(URL, dir, atcoderProbInfo)
+		} else if ty == 1 {
+			err = util.ParseContest(URL, dir, atcoderContestInfo)
+		}
+		if err != nil {
+			fmt.Println(err.Error())
+			os.Exit(1)
+		}
 
-var atcoderCmd = &cobra.Command{
-	Use:   "atcoder",
-	Short: "Parse problems/contests from atcoder.jp",
-	Long: `Usage: 
-    cp_parse atcoder [contest/problem]
-Contest can be:
-    URL             e.g. https://atcoder.jp/contests/arc112
-    Contest id      e.g. arc112
-
-Problem can be:
-    URL             e.g. https://atcoder.jp/contests/arc112/tasks/arc112_a
-    Problem id      e.g. arc112_a
-
-Example:
-    cp_parse atc https://atcoder.jp/contests/arc112/tasks/arc112_a
-    cp_parse atc arc112`,
-	Run: cmdFunc,
+	},
 }
 
 func init() {
 	rootCmd.AddCommand(atcCmd)
-	rootCmd.AddCommand(atcoderCmd)
 
 	// Here you will define your flags and configuration settings.
 

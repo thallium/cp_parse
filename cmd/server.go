@@ -4,13 +4,15 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 
 	"github.com/spf13/cobra"
+	"github.com/thallium/cp_parse/util"
 )
 
 type data struct {
-	Content string
-	Website string
+	Body string
+	Url  string
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
@@ -29,9 +31,23 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	fmt.Println(d.Content)
-	fmt.Println(d.Website)
-	// rootCmd.exe
+	parsedURL, err := url.Parse(d.Url)
+	if err != nil {
+		fmt.Errorf("URL cannot be parsed.")
+		return
+	}
+
+	website := util.GetWebsiteName(parsedURL.Hostname())
+	util.BodyByExtension = d.Body
+	cmd, _, _ := rootCmd.Find([]string{website})
+	if cmd == nil {
+		fmt.Errorf("This website isn't supported!")
+		return
+	}
+	// cmd.SetArgs([]string{d.Url})
+	cmd.Run(nil, []string{d.Url})
+	// cmd.Execute()
+	util.BodyByExtension = ""
 }
 
 var serverCmd = &cobra.Command{
@@ -40,6 +56,7 @@ var serverCmd = &cobra.Command{
 	Long:  "",
 	Run: func(cmd *cobra.Command, args []string) {
 		http.HandleFunc("/", handler)
+		fmt.Println("Server started!")
 		http.ListenAndServe(":8090", nil)
 	},
 }

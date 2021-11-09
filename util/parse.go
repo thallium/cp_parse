@@ -10,7 +10,12 @@ import (
 	"strings"
 )
 
+var BodyByExtension string
+
 func GetBody(URL string) ([]byte, error) {
+	if len(BodyByExtension) != 0 {
+		return []byte(BodyByExtension), nil
+	}
 	resp, err := http.Get(URL)
 
 	if err != nil {
@@ -25,7 +30,7 @@ func findSample(body []byte, info *ProblemInfo) (input [][]byte, output [][]byte
 	in := info.InputRg.FindAllSubmatch(body, -1)
 	ou := info.OutputRg.FindAllSubmatch(body, -1)
 	if in == nil || ou == nil || len(in) != len(ou) {
-		return nil, nil, fmt.Errorf("Parse sample failed")
+		return nil, nil, fmt.Errorf("parse sample failed")
 	}
 	processString := func(s []byte) []byte {
 		brRg := regexp.MustCompile(`<br ?/>`)
@@ -138,4 +143,9 @@ func ParseContest(URL, path string, info *ContestInfo) error {
 		}
 	}
 	return nil
+}
+
+func GetWebsiteName(url string) string {
+	parts := strings.Split(url, ".")
+	return parts[len(parts)-2]
 }
