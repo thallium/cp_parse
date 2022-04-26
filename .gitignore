@@ -1,3 +1,4 @@
 .vscode/
 cp_parse
 chrome_extension.pem
+.DS_Store
