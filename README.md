@@ -1,3 +1,5 @@
+cp-parse-demo.gif![image](https://user-images.githubusercontent.com/20818480/165350113-e898c892-5f7e-4b83-b34e-16a35b514acd.png)
+
 # cp_parser
 Parsing test cases from competitive programming contest websites.
 
